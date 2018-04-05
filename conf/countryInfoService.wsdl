@@ -1,0 +1,51 @@
+<definitions xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+             xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:wsp1_2="http://schemas.xmlsoap.org/ws/2004/09/policy"
+             xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://mzherdev.org/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/wsdl/"
+             targetNamespace="http://mzherdev.org/" name="CountryInfoServiceImpl">
+    <types>
+        <xsd:schema>
+            <xsd:import namespace="http://mzherdev.org/" schemaLocation="countryInfoServiceSchema.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="getByCountryName">
+        <part name="parameters" element="tns:getByCountryName"/>
+    </message>
+    <message name="getByCountryNameResponse">
+        <part name="parameters" element="tns:getByCountryNameResponse"/>
+    </message>
+    <message name="Exception">
+        <part name="fault" element="tns:Exception"/>
+    </message>
+    <portType name="CountryInfoService">
+        <operation name="getByCountryName">
+            <input wsam:Action="http://mzherdev.org/CountryInfoService/getByCountryNameRequest"
+                   message="tns:getByCountryName"/>
+            <output wsam:Action="http://mzherdev.org/CountryInfoService/getByCountryNameResponse"
+                    message="tns:getByCountryNameResponse"/>
+            <fault message="tns:Exception" name="Exception"
+                   wsam:Action="http://mzherdev.org/CountryInfoService/getByCountryName/Fault/Exception"/>
+        </operation>
+    </portType>
+    <binding name="CountryInfoServiceImplPortBinding" type="tns:CountryInfoService">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="getByCountryName">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="Exception">
+                <soap:fault name="Exception" use="literal"/>
+            </fault>
+        </operation>
+    </binding>
+    <service name="CountryInfoServiceImplService">
+        <port name="CountryInfoServiceImplPort" binding="tns:CountryInfoServiceImplPortBinding">
+            <soap:address location="http://localhost:8080/countryService"/>
+        </port>
+    </service>
+</definitions>

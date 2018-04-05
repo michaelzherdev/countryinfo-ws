@@ -1,0 +1,50 @@
+<xs:schema xmlns:tns="http://mzherdev.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0" targetNamespace="http://mzherdev.org/">
+    <xs:element name="Exception" type="tns:Exception"/>
+    <xs:element name="getByCountryName" type="tns:getByCountryName"/>
+    <xs:element name="getByCountryNameResponse" type="tns:getByCountryNameResponse"/>
+    <xs:complexType name="getByCountryName">
+        <xs:sequence>
+            <xs:element name="country" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="getByCountryNameResponse">
+        <xs:sequence>
+            <xs:element name="return" type="tns:countryInfo" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="countryInfo">
+        <xs:sequence>
+            <xs:element name="course" type="tns:valuteCourse" minOccurs="0"/>
+            <xs:element name="forecast" type="tns:forecast" minOccurs="0"/>
+            <xs:element name="id" type="xs:int"/>
+            <xs:element name="status" type="tns:status" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="valuteCourse">
+        <xs:sequence>
+            <xs:element name="characterCode" type="xs:string" minOccurs="0"/>
+            <xs:element name="course" type="xs:string" minOccurs="0"/>
+            <xs:element name="name" type="xs:string" minOccurs="0"/>
+            <xs:element name="nom" type="xs:int"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="forecast">
+        <xs:sequence>
+            <xs:element name="dayTemperature" type="xs:string" minOccurs="0"/>
+            <xs:element name="humidity" type="xs:int"/>
+            <xs:element name="nightTemperature" type="xs:string" minOccurs="0"/>
+            <xs:element name="pressure" type="xs:double"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Exception">
+        <xs:sequence>
+            <xs:element name="message" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:simpleType name="status">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="SUCCESS"/>
+            <xs:enumeration value="ERROR"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>
