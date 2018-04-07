@@ -1,0 +1,90 @@
+<definitions xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:wsp1_2="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://mzherdev.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/wsdl/" targetNamespace="http://mzherdev.org/" name="CountryInfoServiceImplService">
+    <types>
+        <xs:schema xmlns:tns="http://mzherdev.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0" targetNamespace="http://mzherdev.org/">
+            <xs:element name="Exception" type="tns:Exception"/>
+            <xs:element name="getByCountryName" type="tns:getByCountryName"/>
+            <xs:element name="getByCountryNameResponse" type="tns:getByCountryNameResponse"/>
+            <xs:complexType name="getByCountryName">
+                <xs:sequence>
+                    <xs:element name="country" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="getByCountryNameResponse">
+                <xs:sequence>
+                    <xs:element name="date" type="xs:string" minOccurs="0"/>
+                    <xs:element name="status" type="tns:status" minOccurs="0"/>
+                    <xs:element name="countryInfo" type="tns:countryInfo" minOccurs="0"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="countryInfo">
+                <xs:sequence>
+                    <xs:element name="forecast" type="tns:forecast" minOccurs="0"/>
+                    <xs:element name="rate" type="tns:valuteCourse" minOccurs="0"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="valuteCourse">
+                <xs:sequence>
+                    <xs:element name="characterCode" type="xs:string" minOccurs="0"/>
+                    <xs:element name="course" type="xs:string" minOccurs="0"/>
+                    <xs:element name="name" type="xs:string" minOccurs="0"/>
+                    <xs:element name="nom" type="xs:int"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="forecast">
+                <xs:sequence>
+                    <xs:element name="dayTemperature" type="xs:string" minOccurs="0"/>
+                    <xs:element name="humidity" type="xs:int"/>
+                    <xs:element name="nightTemperature" type="xs:string" minOccurs="0"/>
+                    <xs:element name="pressure" type="xs:double"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="Exception">
+                <xs:sequence>
+                    <xs:element name="message" type="xs:string" minOccurs="0"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:simpleType name="status">
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="SUCCESS"/>
+                    <xs:enumeration value="FAIL"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:schema>
+    </types>
+    <message name="getByCountryName">
+        <part name="parameters" element="tns:getByCountryName"/>
+    </message>
+    <message name="getByCountryNameResponse">
+        <part name="parameters" element="tns:getByCountryNameResponse"/>
+    </message>
+    <message name="Exception">
+        <part name="fault" element="tns:Exception"/>
+    </message>
+    <portType name="CountryInfoService">
+        <operation name="getByCountryName">
+            <input wsam:Action="http://mzherdev.org/CountryInfoService/getByCountryNameRequest" message="tns:getByCountryName"/>
+            <output wsam:Action="http://mzherdev.org/CountryInfoService/getByCountryNameResponse" message="tns:getByCountryNameResponse"/>
+            <fault message="tns:Exception" name="Exception" wsam:Action="http://mzherdev.org/CountryInfoService/getByCountryName/Fault/Exception"/>
+        </operation>
+    </portType>
+    <binding name="CountryInfoServiceImplPortBinding" type="tns:CountryInfoService">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="getByCountryName">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="Exception">
+                <soap:fault name="Exception" use="literal"/>
+            </fault>
+        </operation>
+    </binding>
+    <service name="CountryInfoServiceImplService">
+        <port name="CountryInfoServiceImplPort" binding="tns:CountryInfoServiceImplPortBinding">
+            <soap:address location="http://localhost:8080/countryService"/>
+        </port>
+    </service>
+</definitions>

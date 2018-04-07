@@ -1,5 +1,6 @@
-package org.mzherdev.countryinfo;
+package org.mzherdev.countryinfo.sideapi;
 
+import org.mzherdev.countryinfo.jdbc.Statements;
 import org.mzherdev.countryinfo.model.Forecast;
 import org.mzherdev.countryinfo.parser.StaxProcessor;
 
@@ -8,8 +9,9 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
-public class GismeteoUtil {
+public class GismeteoWsConnector {
 
     public static final String GISMETEO_NAMESPACE = "http://ws.gismeteo.ru/";
 
@@ -26,7 +28,36 @@ public class GismeteoUtil {
     private static final String LANGUAGE = "RU";
     private static final String COUNT = "10";
 
-    static SOAPMessage createRegistrationSOAPMessage(String namespace, String prefix, String username, String email) throws Exception {
+    private GismeteoWsConnector() {}
+
+    public static Forecast getForecast(String country, String city) throws Exception {
+        Objects.requireNonNull(country);
+        Objects.requireNonNull(city);
+
+        SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
+        SOAPConnection soapConnection = soapConnectionFactory.createConnection();
+
+        // if need to register another user execute this request and change GismeteoWsConnector.API_KEY constant
+//        SOAPMessage registerSoapRequest = createRegistrationSOAPMessage(GISMETEO_NAMESPACE, "", USERNAME, EMAIL);
+//        SOAPMessage registerSoapResponse = soapConnection.call(registerSoapRequest, REGISTRATION_ENDPOINT_URL);
+//        Statements.insertProviderRequestAndResponse(registerSoapRequest, registerSoapResponse);
+
+        SOAPMessage gismeteoSoapRequest = createLocationSOAPMessage(GISMETEO_NAMESPACE, "", city);
+        SOAPMessage gismeteoSoapResponse = soapConnection.call(gismeteoSoapRequest, LOCATION_ENDPOINT_URL);
+        Statements.insertProviderRequestAndResponse(gismeteoSoapRequest, gismeteoSoapResponse);
+
+        String locationId = parseLocationSOAPResponse(gismeteoSoapResponse, country, city);
+
+        gismeteoSoapRequest = createWeatherSOAPMessage(GISMETEO_NAMESPACE, "", Objects.requireNonNull(locationId));
+        gismeteoSoapResponse = soapConnection.call(gismeteoSoapRequest, WEATHER_ENDPOINT_URL);
+        Statements.insertProviderRequestAndResponse(gismeteoSoapRequest, gismeteoSoapResponse);
+
+        soapConnection.close();
+
+        return parseWeatherSOAPResponse(gismeteoSoapResponse);
+    }
+
+    private static SOAPMessage createRegistrationSOAPMessage(String namespace, String prefix, String username, String email) throws Exception {
         MessageFactory messageFactory = MessageFactory.newInstance();
         SOAPMessage soapMessage = messageFactory.createMessage();
         SOAPPart soapPart = soapMessage.getSOAPPart();
@@ -45,7 +76,7 @@ public class GismeteoUtil {
         return soapMessage;
     }
 
-    static SOAPMessage createLocationSOAPMessage(String namespace, String prefix, String cityName) throws Exception {
+    public static SOAPMessage createLocationSOAPMessage(String namespace, String prefix, String cityName) throws Exception {
         MessageFactory messageFactory = MessageFactory.newInstance();
         SOAPMessage soapMessage = messageFactory.createMessage();
         SOAPPart soapPart = soapMessage.getSOAPPart();
@@ -67,7 +98,7 @@ public class GismeteoUtil {
         return soapMessage;
     }
 
-    static SOAPMessage createWeatherSOAPMessage(String namespace, String prefix, String locationId) throws Exception {
+    private static SOAPMessage createWeatherSOAPMessage(String namespace, String prefix, String locationId) throws Exception {
         MessageFactory messageFactory = MessageFactory.newInstance();
         SOAPMessage soapMessage = messageFactory.createMessage();
         SOAPPart soapPart = soapMessage.getSOAPPart();
@@ -85,7 +116,7 @@ public class GismeteoUtil {
         return soapMessage;
     }
 
-    static String parseLocationSOAPResponse(SOAPMessage soapMessage, String country, String city) throws IOException, SOAPException, XMLStreamException {
+    private static String parseLocationSOAPResponse(SOAPMessage soapMessage, String country, String city) throws IOException, SOAPException, XMLStreamException {
         StaxProcessor processor = new StaxProcessor(soapMessage);
 
         String locationId = "";
@@ -95,7 +126,7 @@ public class GismeteoUtil {
             String xmlCountry = processor.getElementValue("country");
             town = town.split(" ")[0];
             if (country.equalsIgnoreCase(xmlCountry) &&
-                    city.equalsIgnoreCase(town)) { // берем первое совпадение
+                    city.equalsIgnoreCase(town)) {
                 locationId = id;
                 break;
             }
@@ -104,14 +135,12 @@ public class GismeteoUtil {
         return locationId;
     }
 
-    static Forecast parseWeatherSOAPResponse(SOAPMessage soapMessage) throws IOException, SOAPException, XMLStreamException {
+    private static Forecast parseWeatherSOAPResponse(SOAPMessage soapMessage) throws IOException, SOAPException, XMLStreamException {
         StaxProcessor processor = new StaxProcessor(soapMessage);
 
-        Forecast forecast = new Forecast();
+        Forecast forecast = null;
         while (processor.doUntil(XMLEvent.START_ELEMENT, "HHForecast")) {
-            String time = processor.getElementValue("time");
-            LocalDateTime dateTime = LocalDateTime.parse(time);
-//            forecast.setDate(dateTime);
+            forecast = new Forecast();
             forecast.setDayTemperature(processor.getElementValue("tod"));
             forecast.setNightTemperature(processor.getElementValue("t"));
             forecast.setPressure(Double.parseDouble(processor.getElementValue("p")));

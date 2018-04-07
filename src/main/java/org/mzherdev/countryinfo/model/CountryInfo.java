@@ -6,30 +6,31 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CountryInfo {
-    int id;
+
+    public enum Status { SUCCESS, FAIL }
+
     Status status;
-//    LocalDateTime dateTime;
-    Date date;
+    String date;
     Forecast forecast;
-    ValuteCourse course;
+    ValuteCourse rate;
 
     public CountryInfo(Status status, Forecast forecast, ValuteCourse course) {
         this.status = status;
         this.forecast = forecast;
-        this.course = course;
+        this.rate = course;
+        this.date = DateTimeFormatter.ISO_DATE.format(LocalDate.now());
     }
 
-    public CountryInfo(Status status, Date date, Forecast forecast, ValuteCourse course) {
+    public CountryInfo(Status status) {
         this.status = status;
-        this.date = date;
-        this.forecast = forecast;
-        this.course = course;
+        this.date =  DateTimeFormatter.ISO_DATE.format(LocalDate.now());
     }
 }
