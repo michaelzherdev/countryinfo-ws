@@ -85,3 +85,46 @@ GetHHForecast, веб-сервис http://ws.gismeteo.ru/Weather/Weather.asmx
 * Запустить на ней скрипт resources/init_db.sql
 * Запуск сервера через IDE: класс ServicePublisher
 * Запуск клиента через IDE: класс WsClient
+
+
+#### Пример.
+
+Пример запроса:
+
+```xml
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:mzh="http://mzherdev.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <mzh:getByCountryName>
+         <country>США</country>
+      </mzh:getByCountryName>
+   </soapenv:Body>
+</soapenv:Envelope>
+```
+
+Пример ответа:
+```xml
+<S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+   <SOAP-ENV:Header/>
+   <S:Body>
+      <ns2:getByCountryNameResponse xmlns:ns2="http://mzherdev.org/">
+         <date>2018-04-07</date>
+         <status>SUCCESS</status>
+         <countryInfo>
+            <forecast>
+               <dayTemperature>2</dayTemperature>
+               <humidity>36</humidity>
+               <nightTemperature>3.7148234844207764</nightTemperature>
+               <pressure>971.151123046875</pressure>
+            </forecast>
+            <rate>
+               <characterCode>USD</characterCode>
+               <course>57.8332</course>
+               <name>Доллар США</name>
+               <nom>1</nom>
+            </rate>
+         </countryInfo>
+      </ns2:getByCountryNameResponse>
+   </S:Body>
+</S:Envelope>
+```

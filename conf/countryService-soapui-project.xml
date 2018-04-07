@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project id="1b465d02-35a7-41ab-8056-0d8ea085ed3a" activeEnvironment="Default" name="countryService" soapui-version="5.3.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:WsdlInterface" id="7a82fc9e-87cf-48ad-9e6c-61588007c61d" wsaVersion="NONE" name="CountryInfoServiceImplPortBinding" type="wsdl" bindingName="{http://mzherdev.org/}CountryInfoServiceImplPortBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/countryService?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/countryService?wsdl"><con:part><con:url>http://localhost:8080/countryService?wsdl</con:url><con:content><![CDATA[<!--Published by JAX-WS RI (http://jax-ws.java.net). RI's version is JAX-WS RI 2.2.10 svn-revision#919b322c92f13ad085a933e8dd6dd35d4947364b.-->
-<definitions targetNamespace="http://mzherdev.org/" name="CountryInfoServiceImplService" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://mzherdev.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/wsdl/">
+<con:soapui-project id="1b0a5932-e527-462d-ad79-1622033c4f16" activeEnvironment="Default" name="countryService" soapui-version="5.3.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:WsdlInterface" id="b5c89122-d100-426c-8968-5c290876aca7" wsaVersion="NONE" name="CountryInfoServiceImplPortBinding" type="wsdl" bindingName="{http://mzherdev.org/}CountryInfoServiceImplPortBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/countryService?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/countryService?wsdl"><con:part><con:url>http://localhost:8080/countryService?wsdl</con:url><con:content><![CDATA[<!--Published by JAX-WS RI (http://jax-ws.java.net). RI's version is JAX-WS RI 2.2.10 svn-revision#919b322c92f13ad085a933e8dd6dd35d4947364b.-->
+<definitions targetNamespace="http://mzherdev.org/" name="CountryInfoServiceImplService" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:wsp1_2="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://mzherdev.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/wsdl/">
   <types>
     <xs:schema version="1.0" targetNamespace="http://mzherdev.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
       <xs:element name="Exception" type="tns:Exception"/>
@@ -13,22 +13,21 @@
       </xs:complexType>
       <xs:complexType name="getByCountryNameResponse">
         <xs:sequence>
-          <xs:element name="status" type="tns:status" minOccurs="0"/>
           <xs:element name="date" type="xs:string" minOccurs="0"/>
-          <xs:element name="rate" type="tns:rate" minOccurs="0"/>
-          <xs:element name="forecast" type="tns:forecast" minOccurs="0"/>
+          <xs:element name="status" type="tns:status" minOccurs="0"/>
+          <xs:element name="countryInfo" type="tns:countryInfo" minOccurs="0"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:simpleType name="status">
-        <xs:restriction base="xs:string">
-          <xs:enumeration value="SUCCESS"/>
-          <xs:enumeration value="FAIL"/>
-        </xs:restriction>
-      </xs:simpleType>
-      <xs:complexType name="rate">
+      <xs:complexType name="countryInfo">
+        <xs:sequence>
+          <xs:element name="forecast" type="tns:forecast" minOccurs="0"/>
+          <xs:element name="rate" type="tns:valuteCourse" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="valuteCourse">
         <xs:sequence>
           <xs:element name="characterCode" type="xs:string" minOccurs="0"/>
-          <xs:element name="rate" type="xs:string" minOccurs="0"/>
+          <xs:element name="course" type="xs:string" minOccurs="0"/>
           <xs:element name="name" type="xs:string" minOccurs="0"/>
           <xs:element name="nom" type="xs:int"/>
         </xs:sequence>
@@ -46,6 +45,12 @@
           <xs:element name="message" type="xs:string" minOccurs="0"/>
         </xs:sequence>
       </xs:complexType>
+      <xs:simpleType name="status">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="SUCCESS"/>
+          <xs:enumeration value="FAIL"/>
+        </xs:restriction>
+      </xs:simpleType>
     </xs:schema>
   </types>
   <message name="getByCountryName">
@@ -84,14 +89,7 @@
       <soap:address location="http://localhost:8080/countryService"/>
     </port>
   </service>
-</definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/countryService</con:endpoint></con:endpoints><con:operation id="1e7d65cf-5b1a-4205-93cf-911b76b9926f" isOneWay="false" action="" name="getByCountryName" bindingOperationName="getByCountryName" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="2becba5e-e60e-46f8-8fdd-c8a640407dd9" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/countryService?</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:mzh="http://mzherdev.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <mzh:getByCountryName>\r
-         <country>США</country>\r
-      </mzh:getByCountryName>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://mzherdev.org/CountryInfoService/getByCountryNameRequest"/><con:wsrmConfig version="1.2"/></con:call><con:call id="68f6c508-a85f-4595-947d-78b9b1095d52" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/countryService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:mzh="http://mzherdev.org/">\r
+</definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/countryService</con:endpoint></con:endpoints><con:operation id="a9b16d68-8e79-4045-8b49-813851d48c3a" isOneWay="false" action="" name="getByCountryName" bindingOperationName="getByCountryName" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="fe2aebeb-f77e-4b53-a0a5-664ecd858b22" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/countryService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:mzh="http://mzherdev.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <mzh:getByCountryName>\r

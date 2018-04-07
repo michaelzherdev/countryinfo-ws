@@ -15,6 +15,6 @@ public class WsClient {
         Service service = Service.create(url, qname);
 
         CountryInfoService countryInfoService = service.getPort(CountryInfoService.class);
-        log.info(countryInfoService.getByCountryName("США").toString());
+        countryInfoService.getByCountryName("США");
     }
 }
